@@ -60,7 +60,7 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
 
         HashFilter::appendToWriteStream($out, array(
             'algo' => 'sha256',
-            'out' => $hash,
+            'stream' => $hash,
         ));
 
         stream_copy_to_stream($in, $out);

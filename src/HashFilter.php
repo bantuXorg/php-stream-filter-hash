@@ -46,9 +46,9 @@ class HashFilter extends \php_user_filter
     public function onCreate()
     {
         if (!isset($this->params['algo']) ||
-            !isset($this->params['callback']) && !isset($this->params['out']) ||
+            !isset($this->params['callback']) && !isset($this->params['stream']) ||
             isset($this->params['callback']) && !is_callable($this->params['callback']) ||
-            isset($this->params['out']) && !is_resource($this->params['out'])
+            isset($this->params['stream']) && !is_resource($this->params['stream'])
         ) {
             return false;
         }
@@ -69,8 +69,8 @@ class HashFilter extends \php_user_filter
             $result = hash_final($this->hashResource);
             if (isset($this->params['callback'])) {
                 $this->params['callback']($result);
-            } elseif (is_resource($this->params['out'])) {
-                fwrite($this->params['out'], $result);
+            } elseif (is_resource($this->params['stream'])) {
+                fwrite($this->params['stream'], $result);
             }
         }
     }
