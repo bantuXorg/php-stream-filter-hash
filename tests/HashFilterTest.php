@@ -58,16 +58,10 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
         fwrite($in, $phrase);
         rewind($in);
 
-        HashFilter::register();
-        stream_filter_append(
-            $out,
-            'hash',
-            STREAM_FILTER_WRITE,
-            array(
-                'algo' => 'sha256',
-                'out' => $hash,
-            )
-        );
+        HashFilter::appendToWriteStream($out, array(
+            'algo' => 'sha256',
+            'out' => $hash,
+        ));
 
         stream_copy_to_stream($in, $out);
         fclose($in);
@@ -101,16 +95,10 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
             $hashFromCallback = $hash;
         };
 
-        HashFilter::register();
-        stream_filter_append(
-            $out,
-            'hash',
-            STREAM_FILTER_WRITE,
-            array(
-                'algo' => 'md5',
-                'callback' => $callback,
-            )
-        );
+        HashFilter::appendToWriteStream($out, array(
+            'algo' => 'md5',
+            'callback' => $callback,
+        ));
 
         stream_copy_to_stream($in, $out);
         fclose($in);

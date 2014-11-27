@@ -61,4 +61,26 @@ class HashFilter extends \php_user_filter
     {
         return stream_filter_register($filtername, get_called_class());
     }
+
+    /**
+    * Convenience wrapper around stream_filter_append(). Appends an instance
+    * of this stream filter as a write filter to a given stream.
+    *
+    * @param resource $stream  The write stream to append this filter to.
+    * @param array $param      Parameters of this stream filter, e.g. 'algo'.
+    * @return resource         A resource that can be passed to the function
+    *                          stream_filter_remove() to remove the filter from
+    *                          the stream.
+    */
+    public static function appendToWriteStream($stream, array $params)
+    {
+        $filtername = 'bantu-StreamFilter-Hash-HashFilter';
+        static::register($filtername);
+        return stream_filter_append(
+            $stream,
+            $filtername,
+            STREAM_FILTER_WRITE,
+            $params
+        );
+    }
 }
