@@ -110,4 +110,35 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
             'Failed asserting that filter calculated expected checksum.'
         );
     }
+
+    /**
+    * @expectedException \Exception
+    */
+    public function testAppendToWriteStreamWithoutMandatory()
+    {
+        HashFilter::appendToWriteStream(
+            fopen('php://memory', 'r+'),
+            array()
+        );
+    }
+
+    public function testAppendToWriteStreamTwice()
+    {
+        $stream = fopen('php://memory', 'r+');
+        $params = array(
+            'algo' => 'md5',
+            'callback' => function ($hash) {
+            },
+        );
+        $ressource1 = HashFilter::appendToWriteStream($stream, $params);
+        $this->assertInternalType('resource', $ressource1);
+        $ressource2 = HashFilter::appendToWriteStream($stream, $params);
+        $this->assertInternalType('resource', $ressource2);
+        $this->assertNotSame(
+            $ressource1,
+            $ressource2,
+            'Failed asserting that the filter could be appended twice ' .
+            'without causing any namespace issues or similar errors.'
+        );
+    }
 }
