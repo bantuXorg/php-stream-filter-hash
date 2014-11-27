@@ -1,7 +1,7 @@
 {
     "name": "bantu/stream-filter-hash",
     "type": "library",
-    "description": "Stream filter piping a stream through a hash function.",
+    "description": "Stream filter piping data through a hash function.",
     "license": "MIT",
     "require": {
         "php": ">=5.3.0"
