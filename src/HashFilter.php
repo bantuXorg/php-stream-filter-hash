@@ -12,13 +12,13 @@ namespace bantu\StreamFilter\Hash;
 class HashFilter extends \php_user_filter
 {
     /** @var resource */
-    protected $hash_resource;
+    protected $hashResource;
 
     public function filter($in, $out, &$consumed, $closing)
     {
         while ($bucket = stream_bucket_make_writeable($in)) {
             $consumed += $bucket->datalen;
-            hash_update($this->hash_resource, $bucket->data);
+            hash_update($this->hashResource, $bucket->data);
             stream_bucket_append($out, $bucket);
         }
         return PSFS_PASS_ON;
@@ -33,14 +33,14 @@ class HashFilter extends \php_user_filter
         ) {
             return false;
         }
-        $this->hash_resource = hash_init($this->params['algo']);
+        $this->hashResource = hash_init($this->params['algo']);
         return true;
     }
 
     public function onClose()
     {
-        if (is_resource($this->hash_resource)) {
-            $result = hash_final($this->hash_resource);
+        if (is_resource($this->hashResource)) {
+            $result = hash_final($this->hashResource);
             if (isset($this->params['callback'])) {
                 $this->params['callback']($result);
             } elseif (is_resource($this->params['out'])) {
