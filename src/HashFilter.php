@@ -14,6 +14,17 @@ class HashFilter extends \php_user_filter
     /** @var resource */
     protected $hashResource;
 
+    /**
+    * Called when applying the filter.
+    * See http://php.net/manual/en/php-user-filter.filter.php
+    *
+    * @param resource $in
+    * @param resource $out
+    * @param int &$consumed
+    * @param bool $closing
+    *
+    * @return int  Always returns PSFS_PASS_ON.
+    */
     public function filter($in, $out, &$consumed, $closing)
     {
         while ($bucket = stream_bucket_make_writeable($in)) {
@@ -24,6 +35,14 @@ class HashFilter extends \php_user_filter
         return PSFS_PASS_ON;
     }
 
+    /**
+    * Called when the filter is created.
+    * Verifies that mandatory parameters are specified.
+    * Also see http://php.net/manual/en/php-user-filter.oncreate.php
+    *
+    * @return bool  False if mandatory $params are missing.
+    *               True otherwise.
+    */
     public function onCreate()
     {
         if (!isset($this->params['algo']) ||
@@ -37,6 +56,13 @@ class HashFilter extends \php_user_filter
         return true;
     }
 
+    /**
+    * Called when closing the filter. Finalises the hash and either writes the
+    * a hexadecimal string into the output stream or passes it to the callback.
+    * Also see http://php.net/manual/en/php-user-filter.onclose.php
+    *
+    * @return null
+    */
     public function onClose()
     {
         if (is_resource($this->hashResource)) {
