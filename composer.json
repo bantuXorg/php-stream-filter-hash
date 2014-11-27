@@ -3,6 +3,12 @@
     "type": "library",
     "description": "Stream filter piping data through a hash function.",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Fischer",
+            "email": "af@bantuX.org"
+        }
+    ],
     "require": {
         "php": ">=5.3.0"
     },
