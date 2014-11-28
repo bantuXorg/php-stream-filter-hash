@@ -8,7 +8,7 @@
 Through [composer](http://getcomposer.org):
 
 ```bash
-$ composer require bantu/stream-filter-hash:~1.0
+$ composer require bantu/stream-filter-hash
 ```
 
 ## Usage
