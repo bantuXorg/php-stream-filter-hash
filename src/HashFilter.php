@@ -57,8 +57,9 @@ class HashFilter extends \php_user_filter
     }
 
     /**
-    * Called when closing the filter. Finalises the hash and either writes the
-    * a hexadecimal string into the output stream or passes it to the callback.
+    * Called when closing the filter.
+    * Finalises the hash, then writes the result as a hexadecimal string into
+    * the output stream and/or passes it to the callback.
     * Also see http://php.net/manual/en/php-user-filter.onclose.php
     *
     * @return null
@@ -67,10 +68,11 @@ class HashFilter extends \php_user_filter
     {
         if (is_resource($this->hashResource)) {
             $result = hash_final($this->hashResource);
+            if (isset($this->params['stream']) && is_resource($this->params['stream'])) {
+                fwrite($this->params['stream'], $result);
+            }
             if (isset($this->params['callback'])) {
                 $this->params['callback']($result);
-            } elseif (is_resource($this->params['stream'])) {
-                fwrite($this->params['stream'], $result);
             }
         }
     }

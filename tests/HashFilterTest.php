@@ -49,7 +49,7 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFilterWithOutputStream()
+    public function testFilterWithCallbackAndOutputStream()
     {
         $phrase = 'The quick brown fox jumps over the lazy dog.';
         $hash = fopen('php://memory', 'r+');
@@ -58,8 +58,14 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
         fwrite($in, $phrase);
         rewind($in);
 
+        $hashFromCallback = null;
+        $callback = function ($hash) use (&$hashFromCallback) {
+            $hashFromCallback = $hash;
+        };
+
         HashFilter::appendToWriteStream($out, array(
             'algo' => 'sha256',
+            'callback' => $callback,
             'stream' => $hash,
         ));
 
@@ -74,41 +80,20 @@ class HashFilterTest extends \PHPUnit_Framework_TestCase
         );
         fclose($out);
 
+        $this->assertSame(
+            'ef537f25c895bfa782526529a9b63d97aa631564d5d789c2b765448c8635fb6c',
+            $hashFromCallback,
+            'Failed asserting that callback received the expected checksum.'
+        );
+
         rewind($hash);
         $this->assertSame(
             'ef537f25c895bfa782526529a9b63d97aa631564d5d789c2b765448c8635fb6c',
             stream_get_contents($hash),
-            'Failed asserting that filter calculated expected hash.'
+            'Failed asserting that stream contains the expected checksum.'
         );
+
         fclose($hash);
-    }
-
-    public function testFilterWithCallback()
-    {
-        $out = fopen('php://memory', 'r+');
-        $in = fopen('php://memory', 'r+');
-        fwrite($in, 'The quick brown fox jumps over the lazy dog');
-        rewind($in);
-
-        $hashFromCallback = null;
-        $callback = function ($hash) use (&$hashFromCallback) {
-            $hashFromCallback = $hash;
-        };
-
-        HashFilter::appendToWriteStream($out, array(
-            'algo' => 'md5',
-            'callback' => $callback,
-        ));
-
-        stream_copy_to_stream($in, $out);
-        fclose($in);
-        fclose($out);
-
-        $this->assertSame(
-            '9e107d9d372bb6826bd81d3542a419d6',
-            $hashFromCallback,
-            'Failed asserting that filter calculated expected checksum.'
-        );
     }
 
     /**
