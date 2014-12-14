@@ -95,7 +95,7 @@ class HashFilter extends \php_user_filter
     * of this stream filter as a write filter to a given stream.
     *
     * @param resource $stream  The write stream to append this filter to.
-    * @param array $param      Parameters of this stream filter, e.g. 'algo'.
+    * @param array $params     Parameters of this stream filter, e.g. 'algo'.
     * @return resource         A resource that can be passed to the function
     *                          stream_filter_remove() to remove the filter from
     *                          the stream.
